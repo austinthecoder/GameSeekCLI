@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+
+require_relative '../lib/game_seek_cli'
+
+game_seek_cli = GameSeekCLI.new ENV['GAME_SEEK_HOST']
+
+puts game_seek_cli.list
