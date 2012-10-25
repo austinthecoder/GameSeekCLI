@@ -4,11 +4,12 @@
 
 The GameSeekCLI requires a GameSeek endpoint application. By default, it expects this endpoint to be at `localhost:3000`. Otherwise it uses the value in the environment variable `GAME_SEEK_HOST`.
 
-### Print a list of the survey responses
+### Examples
 
-`gs list` displays:
+#### Print a list of the survey responses
 
 ```
+$ ./bin/gs list
 +--------+---------------+--------+-------------+---------------------------------+
 | Person | Platform      | Genre  | Price Range | Games                           |
 +--------+---------------+--------+-------------+---------------------------------+
@@ -24,11 +25,10 @@ The GameSeekCLI requires a GameSeek endpoint application. By default, it expects
 +--------+---------------+--------+-------------+---------------------------------+
 ```
 
-### Remove a game from the system
-
-`gs remove_game <game id>` displays:
+#### Remove a game from the system
 
 ```
+$ ./bin/gs remove_game 347865
 Game was removed.
 ```
 
