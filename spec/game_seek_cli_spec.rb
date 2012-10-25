@@ -6,8 +6,15 @@ class MockGameSeekAPI
   attr_accessor :json
 
   def call(env)
-    if env['PATH_INFO'] == '/api/survey_responses.json'
+    case env['PATH_INFO']
+    when'/api/survey_responses.json'
       [200, {"Content-Type" => "application/json"}, [json]]
+    when %r(/api/games/(\d+))
+      if $1 == '3475829'
+        [204, {"Content-Type" => "text/plain"}, ['']]
+      else
+        [404, {"Content-Type" => "text/plain"}, ["Record not found"]]
+      end
     else
       [404, {"Content-Type" => "text/plain"}, ['Not Found']]
     end
@@ -15,14 +22,14 @@ class MockGameSeekAPI
 end
 
 describe GameSeekCLI do
+  before do
+    @game_seek_api = MockGameSeekAPI.new
+    ShamRack.mount @game_seek_api, "game-seek.test"
+
+    @game_seek_cli = GameSeekCLI.new('game-seek.test')
+  end
+
   describe "list" do
-    before do
-      @game_seek_api = MockGameSeekAPI.new
-      ShamRack.mount @game_seek_api, "game-seek.test"
-
-      @game_seek_cli = GameSeekCLI.new('game-seek.test')
-    end
-
     context "when the GameSeek API has survey responses" do
       it "prints them in a text-style table" do
         @game_seek_api.json = <<-JSON.strip
@@ -85,6 +92,20 @@ describe GameSeekCLI do
       it "prints a nice message" do
         @game_seek_api.json = '[]'
         expect(@game_seek_cli.list).to eq 'No surveys have been taken.'
+      end
+    end
+  end
+
+  describe "remove_game" do
+    context "when the game exists" do
+      it "returns an informative message" do
+        expect(@game_seek_cli.remove_game('3475829')).to eq "Game was removed."
+      end
+    end
+
+    context "when the game doesn't exist" do
+      it "returns an informative message" do
+        expect(@game_seek_cli.remove_game('3746825')).to eq "Game doesn't exist."
       end
     end
   end
